@@ -1,3 +1,4 @@
+import { signUp } from "../../services/auth.service.js";
 import { getAxiosInstance } from "./axios.js"
 
 const sendMessage = (messageObj, messageText) => {
@@ -9,7 +10,7 @@ const sendMessage = (messageObj, messageText) => {
 
 }
 
-export const handleMessage = (messageObj) => {
+export const handleMessage = async (messageObj) => {
 
   const messageText = messageObj.text || "";
 
@@ -20,9 +21,10 @@ export const handleMessage = (messageObj) => {
 
   switch (command) {
     case "start":
+      const commandMessage = await signUp(messageObj);
       return sendMessage(
         messageObj,
-        "Hi, I'm Subscriber, a telegram bot to help you keep track of all your recurring Subscriptions! Let's get started..."
+        commandMessage
       )
 
     default:

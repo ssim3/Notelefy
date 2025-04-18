@@ -15,6 +15,7 @@ app.get("/", async (req, res) => {
 })
 
 app.post("/", async (req, res) => {
+
   res.send(await handler(req));
 })
 
