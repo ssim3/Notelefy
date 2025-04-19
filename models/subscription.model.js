@@ -29,17 +29,6 @@ const subscriptionSchema = new mongoose.Schema({
     required: true,
   },
 
-  category: {
-    type: String,
-    required: true
-  },
-
-  status: {
-    type: String,
-    enum: ['active', 'paused', 'cancelled', 'expired'],
-    default: 'active'
-  },
-
   startDate: {
     type: Date,
     required: true,
@@ -64,7 +53,6 @@ const subscriptionSchema = new mongoose.Schema({
     index: true,
   }
 
-
 }, { timestamp: true })
 
 // Auto-calculate renewal date if missing.
@@ -80,11 +68,6 @@ subscriptionSchema.pre('save', function (next) {
 
     this.renewalDate = new Date(this.startDate);
     this.renewalDate.setDate(this.renewalDate.getDate() + renewalPeriods[this.frequency]);
-  }
-
-  // Auto-update the status if renewal date has passed
-  if (this.renewalDate < new Date()) {
-    this.status = 'expired';
   }
 
   next();

@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import { PORT } from "./config/env.js";
 import connectToDatabase from "./database/mongodb.js";
 import handler from "./controllers/handler.controller.js";
+import { handleMessage } from "./controllers/lib/telegram.js";
 
 const app = express();
 
@@ -16,7 +17,9 @@ app.get("/", async (req, res) => {
 
 app.post("/", async (req, res) => {
 
-  res.send(await handler(req));
+  console.log(req.body);
+
+  res.send(await handler(req, handleMessage));
 })
 
 app.listen(PORT, async () => {

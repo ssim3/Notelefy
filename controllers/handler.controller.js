@@ -6,7 +6,7 @@ const handler = async (req, method) => {
   
   if (body) {
     const messageObj = body.message;
-    await handleMessage(messageObj);
+    await method(messageObj);
   }
 
   return;
