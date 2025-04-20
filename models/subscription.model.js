@@ -29,7 +29,7 @@ const subscriptionSchema = new mongoose.Schema({
     required: true,
   },
 
-  startDate: {
+  startdate: {
     type: Date,
     required: true,
     validate: {
@@ -38,7 +38,7 @@ const subscriptionSchema = new mongoose.Schema({
     }
   },
 
-  renewalDate: {
+  renewaldate: {
     type: Date,
     validate: {
       validator: (value) => value > startDate,
@@ -66,8 +66,8 @@ subscriptionSchema.pre('save', function (next) {
       yearly: 365,
     };
 
-    this.renewalDate = new Date(this.startDate);
-    this.renewalDate.setDate(this.renewalDate.getDate() + renewalPeriods[this.frequency]);
+    this.renewaldate = new Date(this.startdate);
+    this.renewaldate.setDate(this.renewaldate.getDate() + renewalPeriods[this.frequency]);
   }
 
   next();

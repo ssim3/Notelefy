@@ -10,6 +10,7 @@ Here are the commands you can use:
 No more surprises. Just smarter subscriptions. 💸
 `;
 
+export const underfinedMessage = "What you saying bruv.\n" + startMessage
 
 export const createSubscriptionInstruction = `
 <b>Let's add a new subscription! 🎉</b>
@@ -24,3 +25,18 @@ start - (Format: YYYY-MM-DD)
 
 Once I have all the details, I'll save your subscription and calculate the renewal date for you automatically! ✅
 `
+
+export const createSubscriptionErrorInstruction = `
+That's an invalid format!
+
+Please send your subscription details in this format:
+
+name - (e.g., Netflix, Spotify)
+price - (e.g., 15.99)
+currency - [USD, EUR, GBP, SGD]
+frequency - [daily, weekly, monthly, yearly]
+start - (Format: YYYY-MM-DD)
+
+Once I have all the details, I'll save your subscription and calculate the renewal date for you automatically! ✅
+`
+

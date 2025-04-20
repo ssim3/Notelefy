@@ -1,19 +1,7 @@
 import { signUp } from "../../services/auth.service.js";
 import { createSubscription } from "../../services/subscription.service.js";
-import { createSubscriptionInstruction } from "../../strings.js";
+import { createSubscriptionInstruction, startMessage, underfinedMessage } from "../../strings.js";
 import { getAxiosInstance } from "./axios.js"
-
-// userState 
-// chatId: xxx
-//   states: start, add, edit 
-//
-//
-//
-//
-
-// Add basically has 1 step, After the /add command, step 0: Enter Subscription Details 
-// Edit has 2 steps. After the /edit command, step 0: Enter Subscription Name to edit, step 1: Edit the fields to edit
-// Delete has 1 step, After the /
 
 const userStates = {};
 
@@ -29,11 +17,6 @@ export const sendMessage = (messageObj, messageText) => {
 
 export const handleMessage = async (messageObj) => {
 
-  if (messageObj.edited_message) {
-    console.log("Edit message...");
-    return;
-  }
-
   const chatId = messageObj.chat.id;
   const messageText = messageObj.text || "";
   
@@ -48,24 +31,9 @@ export const handleMessage = async (messageObj) => {
 
 }
 
-const handleState = async (chatId, messageObj) => {
-
-    // For follow up steps
-    switch (userStates[chatId]) {
-      case "add":
-        await createSubscription(messageObj);
-        break;
-      case "edit":
-        break;
-      case "delete":
-        break;
-    }
-}
-
 const handleCommand = async (chatId, command, messageObj) => {
     // When a user starts a command, the userStates will clear up.
     userStates[chatId] = {};
-    
 
     switch (command) {
       case "start":
@@ -86,7 +54,7 @@ const handleCommand = async (chatId, command, messageObj) => {
         )
   
       case "edit":
-        userStates[chatId]["state"] = "add";
+        userStates[chatId]["state"] = "edit";
         userStates[chatId]["step"] = "0";
         return sendMessage(
           messageObj,
@@ -94,6 +62,8 @@ const handleCommand = async (chatId, command, messageObj) => {
         )
       
       case "delete":
+        userStates[chatId]["state"] = "delete";
+        userStates[chatId]["step"] = "0";
         return sendMessage(
           messageObj,
           "Subscription successfully deleted"
@@ -105,4 +75,24 @@ const handleCommand = async (chatId, command, messageObj) => {
           "Hi, I don't recognize that command!"
         )
     }
+}
+
+const handleState = async (chatId, messageObj) => {
+
+  if (!(chatId in userStates)) return sendMessage(messageObj, underfinedMessage);
+  if (!("state" in userStates[chatId])) return sendMessage(messageObj, underfinedMessage);
+
+  // For follow up steps
+  switch (userStates[chatId]["state"]) {
+    case "add":
+      const isCreated = await createSubscription(messageObj, userStates);
+      if (isCreated) userStates[chatId] = {};
+      break;
+    case "edit":
+      break;
+    case "delete":
+      break;
+    default:
+      return sendMessage(messageObj, underfinedMessage);
+  }
 }
