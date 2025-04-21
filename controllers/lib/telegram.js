@@ -1,5 +1,5 @@
 import { signUp } from "../../services/auth.service.js";
-import { createSubscription } from "../../services/subscription.service.js";
+import { createSubscription, getUserSubscriptions } from "../../services/subscription.service.js";
 import { createSubscriptionInstruction, startMessage, underfinedMessage } from "../../strings.js";
 import { getAxiosInstance } from "./axios.js"
 
@@ -44,6 +44,15 @@ const handleCommand = async (chatId, command, messageObj) => {
           messageObj,
           commandMessage
         )
+      
+      case "subscriptions":
+        userStates[chatId]["state"] = "subscriptions";
+        userStates[chatId]["step"] = "0";
+        const message = await getUserSubscriptions(messageObj);
+        return sendMessage(
+          messageObj,
+          message
+        );
   
       case "add":
         userStates[chatId]["state"] = "add";
@@ -89,6 +98,15 @@ const handleState = async (chatId, messageObj) => {
       if (isCreated) userStates[chatId] = {};
       break;
     case "edit":
+
+      if (userStates[chatId]["step"] === 0) {
+
+      }
+      
+      else if (userStates[chatId]["step"] === 1) {
+
+      }
+
       break;
     case "delete":
       break;

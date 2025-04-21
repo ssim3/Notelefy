@@ -102,3 +102,34 @@ export const createSubscription = async (messageObj) => {
     session.endSession();
   }
 };
+
+export const getUserSubscriptions = async (messageObj) => {
+
+  // Get the user's mongoDB ID (Is this efficient? Im searching the DB twice)
+  const user = await User.findOne({ telegramId: messageObj.from.id });
+  const userId = user._id;
+
+  // Get all subscriptions that belong to that user
+  const subscriptions = await Subscription.find({ user: userId });
+
+  if (!subscriptions || subscriptions.length === 0) {
+    return "You don't have any logged subscriptions. Start creating some by using the /add command!";
+  }
+
+  let message = "";
+  let totalCost = 0;
+
+  subscriptions.forEach((subscription, index) => {
+    const { name, price, currency, renewaldate } = subscription;
+
+    // Format the details into a string
+    const formattedDetails = `<b>${index + 1}. ${name}</b>\n--------------------------------------------------\nPrice - ${currency}${price}\nNext billing date - ${renewaldate.toLocaleDateString("en-US")}`;
+    totalCost += price;
+
+    message += formattedDetails + "\n\n";
+  })
+
+  message += `Total Upcoming Expenses: ${totalCost}`;
+  
+  return message;
+}
