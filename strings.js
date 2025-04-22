@@ -12,6 +12,16 @@ No more surprises. Just smarter subscriptions. 💸
 
 export const underfinedMessage = "What you saying bruv.\n" + startMessage
 
+export const editSubscriptionInstruction = `
+<b>Undecisive...What did I expect 🎉</b>
+Enter the <b>number</b> of the subscription you want to modify:\n
+`
+
+export const deleteSubscriptionInstruction = `
+<b>About time your broke ass saved some money 🎉</b>
+Enter the <b>number</b> of the subscription you want to delete:\n
+`
+
 export const createSubscriptionInstruction = `
 <b>Let's add a new subscription! 🎉</b>
 
@@ -21,7 +31,7 @@ name - (e.g., Netflix, Spotify)
 price - (e.g., 15.99)
 currency - [USD, EUR, GBP, SGD]
 frequency - [daily, weekly, monthly, yearly]
-start - (Format: YYYY-MM-DD)
+startdate - (Format: YYYY/MM/DD)
 
 Once I have all the details, I'll save your subscription and calculate the renewal date for you automatically! ✅
 `

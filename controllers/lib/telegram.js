@@ -1,6 +1,6 @@
 import { signUp } from "../../services/auth.service.js";
-import { createSubscription, getUserSubscriptions } from "../../services/subscription.service.js";
-import { createSubscriptionInstruction, startMessage, underfinedMessage } from "../../strings.js";
+import { createSubscription, deleteSubscription, listUserSubscriptionsDetails } from "../../services/subscription.service.js";
+import { createSubscriptionInstruction, deleteSubscriptionInstruction, editSubscriptionInstruction, startMessage, underfinedMessage } from "../../strings.js";
 import { getAxiosInstance } from "./axios.js"
 
 const userStates = {};
@@ -48,10 +48,10 @@ const handleCommand = async (chatId, command, messageObj) => {
       case "subscriptions":
         userStates[chatId]["state"] = "subscriptions";
         userStates[chatId]["step"] = "0";
-        const message = await getUserSubscriptions(messageObj);
+        const listOfSubscriptionsDetails = await listUserSubscriptionsDetails(messageObj);
         return sendMessage(
           messageObj,
-          message
+          listOfSubscriptionsDetails
         );
   
       case "add":
@@ -65,17 +65,19 @@ const handleCommand = async (chatId, command, messageObj) => {
       case "edit":
         userStates[chatId]["state"] = "edit";
         userStates[chatId]["step"] = "0";
+        const listOfSubscriptionsToEdit = editSubscriptionInstruction + (await listUserSubscriptionsDetails(messageObj));
         return sendMessage(
           messageObj,
-          "Subscription successfully edited!"
+          listOfSubscriptionsToEdit
         )
       
       case "delete":
         userStates[chatId]["state"] = "delete";
         userStates[chatId]["step"] = "0";
+        const listOfSubscriptionsToDelete = deleteSubscriptionInstruction + (await listUserSubscriptionsDetails(messageObj));
         return sendMessage(
           messageObj,
-          "Subscription successfully deleted"
+          listOfSubscriptionsToDelete
         )
   
       default:
