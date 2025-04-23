@@ -131,7 +131,8 @@ const handleState = async (chatId, messageObj) => {
       }
 
       else if (userStates[chatId]["step"] === "1") {
-        userStates[chatId] = {};
+        const isDeleted = await deleteSubscription(messageObj, userStates[chatId]["selectedSubscription"]);
+        if (isDeleted) userStates[chatId] = {};
       }
 
       break;

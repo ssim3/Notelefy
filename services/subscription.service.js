@@ -90,9 +90,6 @@ export const editSubscription = async (messageObj, subscriptionId) => {
   
   try {
     const { text } = messageObj;
-    const subscription = await getUserSubscription(subscriptionId);
-
-    console.log(subscription);
 
     const lines = text.split("\n").filter(line => line.trim());
 
@@ -101,7 +98,7 @@ export const editSubscription = async (messageObj, subscriptionId) => {
       return { ...details, [key]: value };
     }, {});
 
-    await subscription.updateOne({ ...subscriptionDetails });
+    await Subscription.updateOne({ _id: subscriptionId }, { ...subscriptionDetails });
     sendMessage(messageObj, "Subscription successfully modified!");
 
     return true;
@@ -116,8 +113,32 @@ export const editSubscription = async (messageObj, subscriptionId) => {
   }
 }
 
-export const deleteSubscription = async (messageObj) => {
+export const deleteSubscription = async (messageObj, subscriptionId) => {
 
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+
+    const { text } = messageObj;
+
+    if (text.toLowerCase() !== "delete") {
+      sendMessage(messageObj, "Subcription deletion cancelled.");
+      return true;
+    }
+
+    await Subscription.deleteOne({ _id: subscriptionId });
+    sendMessage(messageObj, "Subcription successfully deleted!");
+    return true;
+
+  } catch (error) {
+
+    sendMessage(messageObj, error.message);
+    return false;
+
+  } finally {
+    session.endSession();
+  }
 }
 
 // ------------------------------------------------------

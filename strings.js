@@ -36,7 +36,7 @@ Enter the <b>number</b> of the subscription you want to delete:\n
 `
 
 export const deleteSubscriptionInstructionStepTwo = `
-To confirm deletion, reply with "yes".  
+To confirm deletion, reply with "delete".  
 This will permanently remove the subscription from your list.
 `
 
