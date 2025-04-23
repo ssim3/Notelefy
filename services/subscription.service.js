@@ -1,17 +1,17 @@
 import mongoose from "mongoose";
 import Subscription from "../models/subscription.model.js";
 import { sendMessage } from "../controllers/lib/telegram.js";
-import { createSubscriptionErrorInstruction } from "../strings.js";
+import { createSubscriptionErrorInstruction, formatSubscriptions } from "../strings.js";
 import User from "../models/user.model.js";
-import { parseDetailLine } from "./utils/validation.js";
+import { parseDetailLine, validateIntegerInput } from "./utils/validation.js";
+
+const VALID_KEYS = ["name", "price", "currency", "frequency", "renewaldate"];
 
 // ------------------------------------------------------
 // Function to create a new subscription
 // /add
 // ------------------------------------------------------
 export const createSubscription = async (messageObj) => {
-
-  const VALID_KEYS = ["name", "price", "currency", "frequency", "startdate"];
 
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -65,17 +65,12 @@ export const listUserSubscriptionsDetails = async (messageObj) => {
     const subscriptions = await getUserSubscriptions(messageObj);
 
     let message = "";
-    let totalCost = 0;
 
-    subscriptions.forEach((subscription, index) => {
-      const { name, price, currency, renewaldate } = subscription;
-
+    subscriptions.forEach((subscription, index) => {    
       // Format the details into a string
-      const formattedDetails = `<b>${index + 1}. ${name}</b>\n--------------------------------------------------\nPrice - ${currency}${price}\nNext billing date - ${renewaldate.toLocaleDateString("en-US")}`;
-      totalCost += price;
-
+      const formattedDetails = `<b>${index + 1}. </b>` + formatSubscriptions(subscription);    
       message += formattedDetails + "\n\n";
-    });
+    });    
 
     return message;
 
@@ -88,8 +83,37 @@ export const listUserSubscriptionsDetails = async (messageObj) => {
 // Function to edit a subscription
 // Step 2 of /edit
 // ------------------------------------------------------
-export const editSubscription = async (messageObj) => {
+export const editSubscription = async (messageObj, subscriptionId) => {
+  
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  
+  try {
+    const { text } = messageObj;
+    const subscription = await getUserSubscription(subscriptionId);
 
+    console.log(subscription);
+
+    const lines = text.split("\n").filter(line => line.trim());
+
+    const subscriptionDetails = lines.reduce((details, line) => {
+      const { key, value } = parseDetailLine(line);
+      return { ...details, [key]: value };
+    }, {});
+
+    await subscription.updateOne({ ...subscriptionDetails });
+    sendMessage(messageObj, "Subscription successfully modified!");
+
+    return true;
+
+  } catch (error) {
+
+    sendMessage(messageObj, error.message);
+    return false;
+
+  } finally {
+    session.endSession();
+  }
 }
 
 export const deleteSubscription = async (messageObj) => {
@@ -102,11 +126,43 @@ export const deleteSubscription = async (messageObj) => {
 // ------------------------------------------------------
 // ------------------------------------------------------
 
-export const selectSubscription = async (messageObj, subscriptions) => {
+export const selectSubscription = async (messageObj) => {
+
+  const subscriptions = await getUserSubscriptions(messageObj);
 
   // Get input from messageObj
-  // If name is in subscriptions names, return the subscription ID
-  // 
+  // validate input,  return the subscription ID
+  try {
+
+    const input = messageObj.text; 
+
+    // Validations
+    if (!validateIntegerInput(input)) throw new Error(`Invalid selection! Please enter the number of the subscription you want to modify!`);
+    if (parseFloat(input) <= 0 || parseFloat(input) > subscriptions.length) throw new Error(`Invalid selection! Please enter a number that YOU CAN ACTUALLY SEE!`);
+
+    // Index the subscriptions and get the chosen subscriptions
+    const selectedSubscription = subscriptions[parseFloat(input) - 1]
+
+    // Send back to the user the subscription that they selected.
+    const formattedDetails = formatSubscriptions(selectedSubscription);
+    sendMessage(messageObj, `You selected:\n` + formattedDetails);
+
+    return selectedSubscription._id;
+
+  } catch (error) {
+    sendMessage(messageObj, error.message || createSubscriptionErrorInstruction);
+    return false;
+  }
+
+}
+
+export const getUserSubscription = async (subscriptionId) => {
+
+  // Get the subscription corresponding to that Id
+  const subscription = await Subscription.findById(subscriptionId);
+  if (!subscription) throw new Error(`Subscription does not exist!`);
+
+  return subscription;
 
 }
 

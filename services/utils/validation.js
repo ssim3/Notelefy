@@ -1,4 +1,4 @@
-const VALID_KEYS = ["name", "price", "currency", "frequency", "startdate"];
+const VALID_KEYS = ["name", "price", "currency", "frequency", "renewaldate"];
 const VALID_FREQUENCIES = ["daily", "weekly", "monthly", "yearly"];
 
 export const validateKeyValue = (key, value) => {
@@ -11,7 +11,7 @@ export const validateKeyValue = (key, value) => {
       return typeof value === "string" && value.trim().length === 3;
     case "frequency":
       return VALID_FREQUENCIES.includes(value.toLowerCase());
-    case "startdate":
+    case "renewaldate":
       return isValidDateFormat(value);
     default:
       return false;
@@ -34,7 +34,7 @@ export const parseDetailLine = (line) => {
     throw new Error(`Invalid value for ${key}: ${value}`);
   }
 
-  if (key === "startdate") {
+  if (key === "renewaldate") {
     const [year, month, day] = value.split('/').map(Number);
     const date = new Date(year, month - 1, day); // month is 0-indexed in 
     
