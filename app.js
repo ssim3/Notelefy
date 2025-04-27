@@ -4,12 +4,15 @@ import { PORT } from "./config/env.js";
 import connectToDatabase from "./database/mongodb.js";
 import handler from "./controllers/handler.controller.js";
 import { handleMessage } from "./controllers/lib/telegram.js";
+import workflowRouter from "./routes/workflow.routes.js";
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({extended : false}));
 app.use(cookieParser());
+
+app.use("/api/v1/workflows", workflowRouter);
 
 app.get("/", async (req, res) => {
   res.send("Hello GET");

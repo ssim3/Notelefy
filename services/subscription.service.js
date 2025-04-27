@@ -3,7 +3,9 @@ import Subscription from "../models/subscription.model.js";
 import { sendMessage } from "../controllers/lib/telegram.js";
 import { createSubscriptionErrorInstruction, formatSubscriptions } from "../strings.js";
 import User from "../models/user.model.js";
-import { parseDetailLine, validateIntegerInput } from "./utils/validation.js";
+import { parseDetailLine, validateIntegerInput } from "./lib/validation.js";
+import { workflowClient } from "../config/upstash.js";
+import { SERVER_URL } from "../config/env.js";
 
 const VALID_KEYS = ["name", "price", "currency", "frequency", "renewaldate"];
 
@@ -39,6 +41,18 @@ export const createSubscription = async (messageObj) => {
       ...subscriptionDetails,
       user: userId
     });
+
+    await workflowClient.trigger({
+      url: `${SERVER_URL}/api/v1/workflows`,
+      body : {
+        messageObj: messageObj,
+        subscriptionId: subscription.id,
+      },
+      headers: {
+        'content-type' : 'application/json',
+      },
+      retries: 0,
+  });
 
     sendMessage(messageObj, "Subscription Successfully Created!");
     return true;
@@ -113,6 +127,10 @@ export const editSubscription = async (messageObj, subscriptionId) => {
   }
 }
 
+// ------------------------------------------------------
+// Function to delete a subscription
+// Step 2 of /delete
+// ------------------------------------------------------
 export const deleteSubscription = async (messageObj, subscriptionId) => {
 
   const session = await mongoose.startSession();
@@ -146,7 +164,6 @@ export const deleteSubscription = async (messageObj, subscriptionId) => {
 // Functions to be reused
 // ------------------------------------------------------
 // ------------------------------------------------------
-
 export const selectSubscription = async (messageObj) => {
 
   const subscriptions = await getUserSubscriptions(messageObj);
@@ -184,7 +201,6 @@ export const getUserSubscription = async (subscriptionId) => {
   if (!subscription) throw new Error(`Subscription does not exist!`);
 
   return subscription;
-
 }
 
 export const getUserSubscriptions = async (messageObj) => {
