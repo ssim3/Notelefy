@@ -6,14 +6,16 @@ import handler from "./controllers/handler.controller.js";
 import { handleMessage } from "./controllers/lib/telegram.js";
 import workflowRouter from "./routes/workflow.routes.js";
 import { qstashClient, workflowClient } from "./config/upstash.js";
+import arcjetMiddleware from "./middlewares/arcjet.middleware.js";
 
 const app = express();
-
-console.log("test");
 
 app.use(express.json());
 app.use(express.urlencoded({extended : false}));
 app.use(cookieParser());
+
+// Middlewares
+app.use(arcjetMiddleware);
 
 app.use("/api/v1/workflows", workflowRouter);
 
@@ -22,9 +24,7 @@ app.get("/", async (req, res) => {
 })
 
 app.post("/", async (req, res) => {
-
   console.log(req.body);
-
   res.send(await handler(req, handleMessage));
 })
 
@@ -36,7 +36,8 @@ app.listen(PORT, async () => {
   try {
     await qstashClient.schedules.create({
       destination: `${SERVER_URL}/api/v1/workflows/schedule`,
-      cron: "* * * * *"
+      scheduleId: "existingScheduleId",
+      cron: "0 0 * * *"
     })
   } catch (error) {
     console.log(error);

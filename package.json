@@ -8,7 +8,10 @@
     "dev": "nodemon app.js"
   },
   "dependencies": {
+    "@arcjet/inspect": "^1.0.0-beta.6",
+    "@arcjet/node": "^1.0.0-beta.6",
     "@upstash/workflow": "^0.2.12",
+    "arcjet": "^1.0.0-beta.6",
     "axios": "^1.8.4",
     "cookie-parser": "~1.4.4",
     "dayjs": "^1.11.13",
