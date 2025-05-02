@@ -37,7 +37,8 @@ app.listen(PORT, async () => {
     await qstashClient.schedules.create({
       destination: `${SERVER_URL}/api/v1/workflows/schedule`,
       scheduleId: "existingScheduleId",
-      cron: "0 0 * * *"
+      cron: "* * * * *",
+      retries: 0,
     })
   } catch (error) {
     console.log(error);

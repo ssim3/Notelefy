@@ -8,5 +8,6 @@ export const workflowClient = new WorkflowClient({
 })
 
 export const qstashClient = new QstashClient({
+   baseUrl: QSTASH_URL,
    token: QSTASH_TOKEN,
 })

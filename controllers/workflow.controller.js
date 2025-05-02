@@ -34,6 +34,8 @@ export const checkSubscriptionRenewalDate = serve(async (context) => {
       continue;
     }     
 
+    console.log(`Subscription ${subscription.name} is due for renewal...`)
+
     // Create messageObj
     const user = await User.findById(subscription.user);
     const messageObj = {
@@ -46,7 +48,7 @@ export const checkSubscriptionRenewalDate = serve(async (context) => {
     const newRenewalDate = renewaldate.add(frequencies[subscription.frequency], 'day');
     await Subscription.updateOne({ _id: subscription._id }, { renewaldate: newRenewalDate });
 
-    sendMessage(messageObj, `Your Subscription ${subscription.name} is due today! Your next reminder is set to ${newRenewalDate.format('YYYY-MM-DD')}`);
+    sendMessage(messageObj, `Your Subscription ${subscription.name} is due today! Your next payment is set to ${newRenewalDate.format('YYYY/MM/DD')}`);
 
     // Trigger new workflow? Is that right?
     await workflowClient.trigger({
