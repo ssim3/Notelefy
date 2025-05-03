@@ -8,6 +8,9 @@ import workflowRouter from "./routes/workflow.routes.js";
 import { qstashClient, workflowClient } from "./config/upstash.js";
 import arcjetMiddleware from "./middlewares/arcjet.middleware.js";
 
+import { setDefaultResultOrder } from "node:dns";
+setDefaultResultOrder("ipv4first");
+
 const app = express();
 
 app.use(express.json());

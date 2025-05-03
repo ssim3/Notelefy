@@ -17,6 +17,11 @@ services:
       - 5500:5500
     env_file:
       - ".env.production.local"
+    networks:
+      - default
+    dns:
+      - 8.8.8.8  # Google DNS
+      - 1.1.1.1  # Cloudflare DNS
 
 # The commented out section below is an example of how to define a PostgreSQL
 # database that your application can use. `depends_on` tells Docker Compose to
