@@ -70,6 +70,7 @@ export const checkSubscriptionRenewalDate = serve(async (context) => {
 export const sendReminders = serve(async (context) => {
 
   console.log(`Running Send Reminders Workflow...`);
+  console.log(context);
 
   const { messageObj, subscriptionId } = context.requestPayload;
   const subscription = await fetchSubscription(context, subscriptionId);
