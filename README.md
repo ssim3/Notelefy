@@ -1,6 +1,6 @@
 # Subscriber
 
-![Subscriber Logo](https://via.placeholder.com/150) <!-- Add your logo here -->
+![Subscriber Logo](https://github.com/ssim3/Subscriber/blob/main/Subscriber(3).png) <!-- Add your logo here -->
 
 Subscriber is your all-in-one Telegram Bot to help you effortlessly manage your subscriptions.
 
@@ -73,5 +73,5 @@ docker compose up --build
 
 Your application will be available at http://localhost:5500.
 
-6. Contributions
+## Contributions
 Contributions are very much welcome. There are several issues that you may come across while running the code that I am currently working hard to solve, do submit a pull request or open an issue if you encounter one of these bugs!
