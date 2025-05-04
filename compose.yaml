@@ -9,6 +9,12 @@
 # https://github.com/docker/awesome-compose
 services:
   server:
+    deploy:
+    restart_policy:
+      condition: on-failure
+      delay: 5s
+      max_attempts: 3
+      window: 120s
     build:
       context: .
     environment:
@@ -22,6 +28,7 @@ services:
     dns:
       - 8.8.8.8  # Google DNS
       - 1.1.1.1  # Cloudflare DNS
+      
 
 # The commented out section below is an example of how to define a PostgreSQL
 # database that your application can use. `depends_on` tells Docker Compose to
