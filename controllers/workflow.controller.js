@@ -76,7 +76,11 @@ export const sendReminders = serve(async (context) => {
 
   if (!subscription) return;
 
+  console.log(`Running REMINDERS loop...`);
+
   for (const daysBefore of REMINDERS) {
+
+    console.log(`Day: ${daysBefore}}`);
 
     const renewaldate = dayjs(subscription.renewaldate);
     const reminderDate = renewaldate.subtract(daysBefore, 'day');
