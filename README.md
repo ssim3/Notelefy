@@ -1,8 +1,20 @@
-# Subscriber
+<div align="center">
+  <br />
+    <img src="https://github.com/ssim3/Subscriber/blob/main/Subscriber(3).png" alt="Subscriber logo" />
+  <br />
+  
+  <div>
+    <img src="https://img.shields.io/badge/node.js-339933?style=for-the-badge&logo=Node.js&logoColor=white" alt="node.js" />
+    <img src="https://img.shields.io/badge/express.js-000000?style=for-the-badge&logo=express&logoColor=white" alt="express.js" />
+    <img src="https://img.shields.io/badge/-MongoDB-13aa52?style=for-the-badge&logo=mongodb&logoColor=white" alt="mongodb" />
+  </div>
 
-![Subscriber Logo](https://github.com/ssim3/Subscriber/blob/main/Subscriber(3).png) <!-- Add your logo here -->
-
-Subscriber is your all-in-one Telegram Bot to help you effortlessly manage your subscriptions.
+   <br />
+  
+   <div align="center">
+     Subscriber is your all-in-one Telegram Bot to help you effortlessly manage your subscriptions.
+    </div>
+</div>
 
 ## Try It Out
 
@@ -19,7 +31,7 @@ Simply start a chat with the bot using the <i>/start</i> command and follow the 
 - 📊 View all subscriptions in one place
 - 🔐 Secure user authentication
 
-## Technologies Used
+## 🔧 Tech Stack
 
 - **Backend**: Node.js, Express.js for API routes
 - **Database**: MongoDB (with Mongoose ODM)
@@ -42,12 +54,12 @@ Simply start a chat with the bot using the <i>/start</i> command and follow the 
 
 1. Clone the repository:
 ```bash
-   git clone https://github.com/yourusername/notelefy.git
-   cd notelefy
+git clone https://github.com/yourusername/notelefy.git
+cd notelefy
 ```
 2. Install Dependencies
 ```bash
-   npm install
+npm install
 ```
 3. Set up environment variables: Create .env.development.local or .env.production.local with the following variables:
 ```bash
