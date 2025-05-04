@@ -68,32 +68,49 @@ export const checkSubscriptionRenewalDate = serve(async (context) => {
 })
 
 export const sendReminders = serve(async (context) => {
-
   console.log(`Running Send Reminders Workflow...`);
-  console.log(context);
 
-  const { messageObj, subscriptionId } = context.requestPayload;
-  const subscription = await fetchSubscription(context, subscriptionId);
+  try {
+    const { messageObj, subscriptionId } = context.requestPayload;
 
-  if (!subscription) return;
-
-  console.log(`Running REMINDERS loop...`);
-
-  for (const daysBefore of REMINDERS) {
-
-    console.log(`Day: ${daysBefore}}`);
-
-    const renewaldate = dayjs(subscription.renewaldate);
-    const reminderDate = renewaldate.subtract(daysBefore, 'day');
-
-    if (reminderDate.isAfter(dayjs())) {
-      await sleepUntilReminder(context, `Sleeping until ${daysBefore} days reminder at ${reminderDate}`, reminderDate);
+    const subscription = await fetchSubscription(context, subscriptionId);
+    if (!subscription) {
+      console.warn(`No subscription found for ID: ${subscriptionId}`);
+      return;
     }
 
-    await triggerReminder(context, messageObj, `[REMINDER] Subscription ${subscription.name} is due in ${daysBefore} days.`);
-  }
+    console.log(`Running REMINDERS loop...`);
 
+    for (const daysBefore of REMINDERS) {
+      try {
+        console.log(`Day: ${daysBefore}`);
+
+        const renewaldate = dayjs(subscription.renewaldate);
+        const reminderDate = renewaldate.subtract(daysBefore, 'day');
+
+        if (reminderDate.isAfter(dayjs())) {
+          await sleepUntilReminder(
+            context,
+            `Sleeping until ${daysBefore} days reminder at ${reminderDate}`,
+            reminderDate
+          );
+        }
+
+        await triggerReminder(
+          context,
+          messageObj,
+          `[REMINDER] Subscription ${subscription.name} is due in ${daysBefore} days.`
+        );
+      } catch (innerError) {
+        console.error(`Error during reminder for ${daysBefore} days:`, innerError);
+      }
+    }
+
+  } catch (error) {
+    console.error("Fatal error in sendReminders workflow:", error);
+  }
 });
+
 
 const sleepUntilReminder = async (context, label, date) => {
   console.log(`Sleeping until ${label} reminder at ${date}`);
