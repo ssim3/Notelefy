@@ -7,27 +7,35 @@ const userStates = {};
 
 export const sendMessage = (messageObj, messageText) => {
 
-  return getAxiosInstance().get("sendMessage", {
-    chat_id: messageObj.chat.id,
-    text: messageText,
-    parse_mode: "HTML"
-  })
+  try {
+    return getAxiosInstance().get("sendMessage", {
+      chat_id: messageObj.chat.id,
+      text: messageText,
+      parse_mode: "HTML"
+    })
+  } catch (error) {
+    console.log(`Telegram Error: ${error}`)
+  }
 
 }
 
 export const handleMessage = async (messageObj) => {
 
-  const chatId = messageObj.chat.id;
-  const messageText = messageObj.text || "";
-
-  // Handles command
-  if (messageText.charAt(0) === "/") {
-    const command = messageText.substr(1);
-    handleCommand(chatId, command, messageObj);
-    return;
+  try {
+    const chatId = messageObj.chat.id;
+    const messageText = messageObj.text || "";
+  
+    // Handles command
+    if (messageText.charAt(0) === "/") {
+      const command = messageText.substr(1);
+      handleCommand(chatId, command, messageObj);
+      return;
+    }
+  
+    handleState(chatId, messageObj);
+  } catch (error) {
+    console.log(`Telegram Error: ${error}`)
   }
-
-  handleState(chatId, messageObj);
 
 }
 
